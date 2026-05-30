@@ -1,1 +1,599 @@
-<!DOCTYPE html> <html lang="th"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>TVET Deep Tech Mining</title> <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <style> html, body { height: 100%; margin: 0; padding: 0; background: #090d16; font-family: 'Segoe UI', sans-serif; color: #fff; overflow: hidden; } .app-container { background: #0b0f19; border: 1px solid #1f2937; border-radius: 30px; padding: 20px; width: 95%; max-width: 350px; height: 95vh; margin: 10px auto; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; } .logo-img { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto; border: 2px solid #fbbf24; } .balance-value { font-size: 40px; font-weight: 800; font-family: monospace; color: #fff; margin: 5px 0; } .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; } .stat-card { background: #111827; border: 1px solid #374151; padding: 12px; border-radius: 15px; text-align: left; } .stat-value { font-size: 14px; font-weight: bold; color: #fbbf24; margin-top: 5px; } .stat-label { font-size: 8px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; } .btn { width: 100%; padding: 14px; font-size: 14px; font-weight: bold; border-radius: 15px; border: none; cursor: pointer; margin-bottom: 8px; transition: 0.3s; } .btn-stop { background: #ef4444; color: #fff; } .btn-claim { background: #10b981; color: #fff; } .btn-add { background: #374151; color: #fff; } .login-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: #090d16; z-index:9999; display: flex; align-items:center; justify-content:center; padding: 20px; } .input-field { width:100%; padding:12px; border-radius:10px; border:1px solid #333; background:#000; color:#fff; margin-bottom:10px; box-sizing:border-box; } </style> </head> <body> <div id="loginSection" class="login-overlay"> <div style="width:100%; max-width:300px;"> <input type="text" id="userInput" class="input-field" placeholder="Username"> <input type="password" id="passInput" class="input-field" placeholder="Password"> <button class="btn" style="background:#fbbf24; color:#000;" onclick="loginAction()">Login</button> </div> </div> <div class="app-container"> <div> <img src="https://i.postimg.cc/ncjSwbjv/Gemini-Generated-Image-ncdze7ncdze7ncdz-removebg-preview.png" class="logo-img"> <div id="currentLoggedUser" style="font-size:11px; color:#fbbf24; margin-top:5px;">User: tve001</div> <div class="balance-value" id="balanceDisplay">0.2040</div> </div> <div class="dashboard-grid"> <div class="stat-card"><div class="stat-label">EFFICIENCY</div><div class="stat-value">98.5%</div></div> <div class="stat-card"><div class="stat-label">CARBON OFFSET</div><div class="stat-value">0.34 tCO2</div></div> </div> <canvas id="miningChart" style="max-height: 150px; width: 100%; margin: 10px 0;"></canvas> <div> <button class="btn btn-stop" onclick="toggleMining()">Stop</button> <button class="btn btn-claim" onclick="claimReward()">Claim Credit</button> <button class="btn btn-add" onclick="addTokenManual()">+ Add TVE</button> </div> </div> <script> // กราฟสวยงาม const ctx = document.getElementById('miningChart').getContext('2d'); new Chart(ctx, { type: 'line', data: { labels: ['','','','','',''], datasets: [{ data: [0.1, 0.4, 0.2, 0.6, 0.3, 0.5], borderColor: '#fbbf24', tension: 0.5, fill: true, backgroundColor: 'rgba(251, 191, 36, 0.1)' }] }, options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { display: false } } } }); function loginAction() { document.getElementById("loginSection").style.display = "none"; } function toggleMining() { alert("Mining Stopped"); } async function claimReward() { alert("Claiming..."); } async function addTokenManual() { alert("Adding Token..."); } </script> </body> </html>
+# TVET Futuristic Mining Dashboard (Complete Demo)
+
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TVET NODE-07</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html,body{
+width:100%;
+height:100%;
+overflow-x:hidden;
+font-family:'Segoe UI',sans-serif;
+background:#000;
+color:#fff;
+}
+
+body{
+background:
+radial-gradient(circle at top,#07111f 0%,#030712 45%,#000 100%);
+}
+
+body::before{
+content:'';
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at center,
+rgba(0,255,255,0.08),
+transparent 60%);
+animation:pulseBg 6s infinite;
+z-index:0;
+}
+
+@keyframes pulseBg{
+0%{opacity:0.4;transform:scale(1);}
+50%{opacity:0.8;transform:scale(1.1);}
+100%{opacity:0.4;transform:scale(1);}
+}
+
+body::after{
+content:'';
+position:fixed;
+inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+background-size:45px 45px;
+animation:gridMove 18s linear infinite;
+z-index:0;
+}
+
+@keyframes gridMove{
+from{transform:translateY(0);}
+to{transform:translateY(45px);}
+}
+
+#bg3d{
+position:fixed;
+inset:0;
+z-index:1;
+pointer-events:none;
+opacity:0.4;
+}
+
+.cyber-particle{
+position:fixed;
+width:3px;
+height:3px;
+background:#fbbf24;
+border-radius:50%;
+box-shadow:0 0 10px #fbbf24;
+animation:floatParticle linear infinite;
+z-index:2;
+}
+
+@keyframes floatParticle{
+from{transform:translateY(100vh);opacity:0;}
+20%{opacity:1;}
+to{transform:translateY(-100vh);opacity:0;}
+}
+
+.app-container{
+position:relative;
+z-index:5;
+width:100%;
+max-width:430px;
+margin:auto;
+min-height:100vh;
+padding:16px;
+}
+
+.top-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:10px;
+}
+
+.node-title{
+font-size:20px;
+font-weight:900;
+letter-spacing:3px;
+}
+
+.node-sub{
+color:#fbbf24;
+font-size:11px;
+letter-spacing:2px;
+margin-top:4px;
+}
+
+.online-status{
+color:#00ff99;
+font-weight:bold;
+font-size:14px;
+}
+
+.reactor-wrap{
+position:relative;
+width:100%;
+height:240px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-top:20px;
+}
+
+.reactor-ring{
+position:absolute;
+width:230px;
+height:230px;
+border-radius:50%;
+border:2px solid rgba(251,191,36,0.7);
+box-shadow:
+0 0 30px rgba(251,191,36,0.5),
+inset 0 0 50px rgba(251,191,36,0.2);
+animation:ringRotate 12s linear infinite;
+}
+
+.reactor-ring::before{
+content:'';
+position:absolute;
+inset:18px;
+border-radius:50%;
+border:1px solid rgba(0,255,255,0.3);
+}
+
+@keyframes ringRotate{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
+}
+
+.reactor-logo{
+width:120px;
+height:120px;
+border-radius:50%;
+box-shadow:0 0 30px rgba(251,191,36,0.8);
+z-index:3;
+}
+
+.balance-area{
+text-align:center;
+margin-top:10px;
+}
+
+.balance-title{
+font-size:13px;
+letter-spacing:2px;
+color:#cbd5e1;
+}
+
+.balance-value{
+font-size:70px;
+font-weight:900;
+color:#fbbf24;
+text-shadow:
+0 0 10px #fbbf24,
+0 0 30px #fbbf24,
+0 0 60px rgba(251,191,36,0.5);
+animation:pulseBalance 2s infinite;
+}
+
+@keyframes pulseBalance{
+50%{transform:scale(1.03);}
+}
+
+.balance-unit{
+font-size:28px;
+}
+
+.active-status{
+color:#00ff99;
+font-size:22px;
+margin-top:6px;
+animation:blink 1s infinite;
+}
+
+@keyframes blink{
+50%{opacity:0.5;}
+}
+
+.dashboard-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:14px;
+margin-top:24px;
+}
+
+.stat-card{
+background:rgba(7,17,31,0.75);
+border:1px solid rgba(0,255,255,0.15);
+border-radius:20px;
+padding:18px;
+backdrop-filter:blur(12px);
+box-shadow:
+0 0 20px rgba(0,255,255,0.05),
+inset 0 0 20px rgba(255,255,255,0.03);
+}
+
+.stat-label{
+font-size:11px;
+letter-spacing:1px;
+color:#94a3b8;
+}
+
+.stat-value{
+margin-top:10px;
+font-size:28px;
+font-weight:800;
+color:#fbbf24;
+}
+
+.graph-box,
+.ai-log{
+margin-top:24px;
+background:rgba(0,0,0,0.35);
+border-radius:22px;
+padding:16px;
+border:1px solid rgba(251,191,36,0.15);
+}
+
+.ai-title{
+font-size:18px;
+margin-bottom:12px;
+}
+
+.ai-line{
+color:#00ff99;
+font-size:13px;
+margin-bottom:6px;
+}
+
+.btn-group{
+display:flex;
+gap:10px;
+margin-top:24px;
+}
+
+.btn{
+flex:1;
+padding:16px 10px;
+border:none;
+border-radius:18px;
+font-weight:700;
+color:#fff;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+}
+
+.btn-red{
+background:linear-gradient(135deg,#ff3d3d,#7f1d1d);
+}
+
+.btn-green{
+background:linear-gradient(135deg,#00d084,#065f46);
+}
+
+.btn-purple{
+background:linear-gradient(135deg,#9333ea,#4c1d95);
+}
+
+.wallet-box{
+margin-top:20px;
+text-align:center;
+font-size:14px;
+color:#fbbf24;
+word-break:break-all;
+}
+
+@media(max-width:480px){
+.balance-value{font-size:56px;}
+.btn-group{flex-direction:column;}
+}
+
+</style>
+</head>
+<body>
+
+<div id="bg3d"></div>
+
+<div class="app-container">
+
+<div class="top-header">
+<div>
+<div class="node-title">TVET NODE-07</div>
+<div class="node-sub">DEEP TECH MINING SYSTEM</div>
+</div>
+<div class="online-status">ONLINE ●</div>
+</div>
+
+<div class="reactor-wrap">
+<div class="reactor-ring"></div>
+<img class="reactor-logo" src="https://i.postimg.cc/ncjSwbjv/Gemini-Generated-Image-ncdze7ncdze7ncdz-removebg-preview.png">
+</div>
+
+<div class="balance-area">
+<div class="balance-title">LIVE TVE BALANCE</div>
+<div class="balance-value" id="balanceDisplay">
+0.2370 <span class="balance-unit">TVE</span>
+</div>
+<div class="active-status">● CARBON CREDIT ACTIVE</div>
+</div>
+
+<div class="dashboard-grid">
+
+<div class="stat-card">
+<div class="stat-label">EFFICIENCY</div>
+<div class="stat-value">97.5%</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">HASH RATE</div>
+<div class="stat-value">132 TH/s</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">POWER</div>
+<div class="stat-value" id="rateDisplay">0.0100 TVE/s</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">DIFFICULTY</div>
+<div class="stat-value">PHASE 1</div>
+</div>
+
+</div>
+
+<div class="graph-box">
+<canvas id="miningChart"></canvas>
+</div>
+
+<div class="ai-log">
+<div class="ai-title">AI SYSTEM LOG</div>
+<div class="ai-line">[AI] Block validated</div>
+<div class="ai-line">[NETWORK] Connection stable</div>
+<div class="ai-line">[MINING] Reward +0.0100 TVE</div>
+<div class="ai-line">[WALLET] Ready to claim</div>
+</div>
+
+<div class="btn-group">
+<button class="btn btn-red" id="mineBtn" onclick="toggleMining()">STOP MINING</button>
+<button class="btn btn-green" onclick="claimReward()">CLAIM TVE</button>
+<button class="btn btn-purple" onclick="connectWallet()">CONNECT WEB3</button>
+</div>
+
+<div class="wallet-box" id="walletDisplay">
+Wallet : NOT CONNECTED
+</div>
+
+</div>
+
+<script>
+
+/* PARTICLES */
+
+for(let i=0;i<70;i++){
+const p=document.createElement('div');
+p.className='cyber-particle';
+p.style.left=Math.random()*100+'vw';
+p.style.animationDuration=(5+Math.random()*10)+'s';
+p.style.opacity=Math.random();
+document.body.appendChild(p);
+}
+
+/* THREE JS */
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.getElementById('bg3d').appendChild(renderer.domElement);
+
+const geometry=new THREE.TorusGeometry(5,0.15,16,100);
+const material=new THREE.MeshBasicMaterial({
+color:0xfbbf24,
+wireframe:true
+});
+
+const torus=new THREE.Mesh(geometry,material);
+scene.add(torus);
+
+camera.position.z=12;
+
+function animate(){
+requestAnimationFrame(animate);
+torus.rotation.x+=0.002;
+torus.rotation.y+=0.004;
+renderer.render(scene,camera);
+}
+
+animate();
+
+/* GRAPH */
+
+const ctx=document.getElementById('miningChart');
+
+let graphData=[0.10,0.25,0.22,0.40,0.18,0.52,0.50,0.85,0.78,0.90,1.05,1.18];
+
+const chart=new Chart(ctx,{
+
+type:'line',
+
+data:{
+labels:['','','','','','','','','','','',''],
+datasets:[{
+data:graphData,
+borderColor:'#fbbf24',
+borderWidth:4,
+tension:0.5,
+fill:true,
+backgroundColor:'rgba(251,191,36,0.10)',
+pointRadius:5,
+pointBackgroundColor:'#fbbf24',
+pointBorderColor:'#fff'
+}]
+},
+
+options:{
+responsive:true,
+plugins:{legend:{display:false}},
+scales:{
+y:{display:false},
+x:{display:false}
+}
+}
+});
+
+setInterval(()=>{
+
+graphData.shift();
+
+let last=graphData[graphData.length-1];
+let next=last+(Math.random()*0.25-0.05);
+
+if(next<0.2){next=0.2;}
+
+graphData.push(next);
+chart.update();
+
+},1500);
+
+/* MINING SYSTEM */
+
+let mining=true;
+let balance=0.2370;
+let miningRate=0.0100;
+
+const balanceDisplay=document.getElementById('balanceDisplay');
+const activeStatus=document.querySelector('.active-status');
+const mineBtn=document.getElementById('mineBtn');
+
+function updateBalance(){
+
+balanceDisplay.innerHTML=
+
+balance.toFixed(4)
++
+' <span class="balance-unit">TVE</span>';
+}
+
+setInterval(()=>{
+
+if(mining){
+
+balance+=miningRate;
+updateBalance();
+}
+
+},1000);
+
+function toggleMining(){
+
+mining=!mining;
+
+if(mining){
+
+activeStatus.innerHTML='● CARBON CREDIT ACTIVE';
+activeStatus.style.color='#00ff99';
+
+mineBtn.innerText='STOP MINING';
+
+mineBtn.style.background=
+'linear-gradient(135deg,#ff3d3d,#7f1d1d)';
+
+}else{
+
+activeStatus.innerHTML='● MINING PAUSED';
+activeStatus.style.color='#ff5555';
+
+mineBtn.innerText='START MINING';
+
+mineBtn.style.background=
+'linear-gradient(135deg,#00d084,#065f46)';
+}
+}
+
+/* WALLET */
+
+async function connectWallet(){
+
+try{
+
+if(!window.ethereum){
+alert('กรุณาติดตั้ง MetaMask');
+return;
+}
+
+const provider=new ethers.BrowserProvider(window.ethereum);
+const signer=await provider.getSigner();
+const address=await signer.getAddress();
+
+window.userWallet=address;
+
+document.getElementById('walletDisplay').innerText=
+'Wallet : '+
+address.substring(0,6)+'...'+address.substring(address.length-4);
+
+}catch(err){
+console.log(err);
+alert('เชื่อมต่อกระเป๋าไม่สำเร็จ');
+}
+}
+
+/* CLAIM DEMO */
+
+async function claimReward(){
+
+if(balance<=0){
+alert('ไม่มี TVE ให้เคลม');
+return;
+}
+
+if(!window.userWallet){
+alert('กรุณาเชื่อมต่อกระเป๋าก่อน');
+return;
+}
+
+alert(
+'ระบบ DEMO: จำลองการเคลมสำเร็จ จำนวน '+
+balance.toFixed(4)+' TVE'
+);
+
+balance=0;
+updateBalance();
+}
+
+</script>
+
+</body>
+</html>
+```
+
+หมายเหตุ:
+
+* เวอร์ชันนี้เป็น DEMO UI + Web3 connection
+* ปุ่มขุดทำงานจริงในหน้าเว็บ
+* กราฟเคลื่อนไหว realtime
+* เชื่อม MetaMask ได้
+* ส่วน claim เป็นระบบจำลอง ไม่ได้ mint token จริงบน blockchain
+* ถ้าจะโอน token จริง ต้องมี Smart Contract + Backend Signature API
