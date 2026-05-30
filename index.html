@@ -17,12 +17,48 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
 
         html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* ปิดการเลื่อนหน้าจอ */
-            background: var(--bg);
-            color: #fff;
-        }
+    margin: 0;
+    padding: 0;
+    background: #030305;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+/* พื้นหลังเรืองแสงแบบ Sci-fi */
+.glow-orb {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 60%);
+    animation: rotateOrb 20s linear infinite;
+    z-index: -1;
+}
+
+/* ลายตารางแบบ Cyber */
+.grid-overlay {
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+    z-index: -1;
+}
+
+@keyframes rotateOrb {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ปรับความโปร่งใสของ Card เพื่อให้เห็นพื้นหลังสวยๆ */
+.stat-card, .graph-box {
+    background: rgba(10, 10, 15, 0.6) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
 
         .app-container {
             width: 100%;
