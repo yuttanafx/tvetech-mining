@@ -4,122 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TVET NODE-07 | Advanced Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --gold: #fbbf24;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --bg: #030305;
-        }
+        :root { --gold: #fbbf24; --bg: #030305; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        
+        html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: #fff; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        /* พื้นหลังเรืองแสง */
+        .bg-glow { position: fixed; inset: 0; z-index: -2; background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #030305 100%); }
+        .grid-overlay { position: fixed; inset: 0; z-index: -1; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 50px 50px; }
 
-        html, body {
-    margin: 0;
-    padding: 0;
-    background: #030305;
-    color: #fff;
-    overflow: hidden;
-    position: relative;
-}
+        .app-container { width: 100%; max-width: 450px; height: 100vh; margin: auto; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
 
-/* พื้นหลังเรืองแสงแบบ Sci-fi */
-.glow-orb {
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 60%);
-    animation: rotateOrb 20s linear infinite;
-    z-index: -1;
-}
-
-/* ลายตารางแบบ Cyber */
-.grid-overlay {
-    position: fixed;
-    inset: 0;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    mask-image: radial-gradient(circle at center, black, transparent 80%);
-    z-index: -1;
-}
-
-@keyframes rotateOrb {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* ปรับความโปร่งใสของ Card เพื่อให้เห็นพื้นหลังสวยๆ */
-.stat-card, .graph-box {
-    background: rgba(10, 10, 15, 0.6) !important;
-    backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-        .app-container {
-            width: 100%;
-            max-width: 450px;
-            height: 100vh;
-            margin: auto;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .top-header { display: flex; justify-content: space-between; align-items: center; }
-        .node-title { font-size: 18px; font-weight: 900; letter-spacing: 2px; }
-        .node-sub { font-size: 10px; color: var(--gold); }
-
-        .reactor-wrap { height: 160px; display: flex; align-items: center; justify-content: center; }
-        .reactor-logo { width: 90px; height: 90px; border-radius: 50%; box-shadow: 0 0 30px rgba(251, 191, 36, 0.3); }
+        /* วงแหวนพลังงาน */
+        .energy-reactor { position: relative; height: 200px; display: flex; align-items: center; justify-content: center; }
+        .ring { position: absolute; width: 150px; height: 150px; border: 2px solid var(--gold); border-radius: 50%; animation: rotate 10s linear infinite; box-shadow: 0 0 20px var(--gold); }
+        .ring:nth-child(2) { width: 180px; animation-direction: reverse; border-color: #9333ea; box-shadow: 0 0 20px #9333ea; }
+        
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 15px; padding: 12px; }
-        .stat-label { font-size: 9px; color: #94a3b8; text-transform: uppercase; }
-        .stat-value { font-size: 18px; font-weight: 700; color: var(--gold); margin-top: 4px; }
-
-        .balance-area { text-align: center; }
-        .balance-value { font-size: 40px; font-weight: 900; color: var(--gold); }
-
-        .graph-box { flex-grow: 1; min-height: 100px; margin: 10px 0; background: rgba(0,0,0,0.3); border-radius: 15px; padding: 10px; border: 1px solid var(--border); }
-
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .btn { padding: 12px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
-        .btn-full { grid-column: span 2; background: linear-gradient(135deg, #9333ea, #4c1d95); color: #fff; }
-        .btn-red { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; }
-        .btn-green { background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; }
-
-        #walletDisplay { text-align: center; font-size: 9px; color: #666; margin-top: 8px; }
+        .stat-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .graph-box { flex-grow: 1; background: rgba(0,0,0,0.3); border-radius: 15px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); margin: 10px 0; }
+        
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-full { grid-column: span 2; background: #9333ea; color: white; }
     </style>
 </head>
 <body>
-<div class="glow-orb"></div>
-<div class="grid-overlay"></div>
+
+    <div class="bg-glow"></div>
+    <div class="grid-overlay"></div>
+
     <div class="app-container">
         <div class="top-header">
-            <div>
-                <div class="node-title">TVET NODE-07</div>
-                <div class="node-sub">DEEP TECH MINING</div>
-            </div>
-            <div style="color:#10b981; font-size: 11px;">● LIVE</div>
+            <div style="font-size: 18px; font-weight: 900; letter-spacing: 2px;">TVET NODE-07</div>
         </div>
 
-        <div class="reactor-wrap">
-            <img class="reactor-logo" src="https://i.postimg.cc/ncjSwbjv/Gemini-Generated-Image-ncdze7ncdze7ncdz-removebg-preview.png">
-        </div>
-
-        <div class="balance-area">
-            <div class="balance-value" id="balanceDisplay">0.2370 <span style="font-size: 18px;">TVE</span></div>
+        <div class="energy-reactor">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <img src="https://i.postimg.cc/ncjSwbjv/Gemini-Generated-Image-ncdze7ncdze7ncdz-removebg-preview.png" style="width: 80px; z-index: 1;">
         </div>
 
         <div class="dashboard-grid">
-            <div class="stat-card"><div class="stat-label">EFFICIENCY</div><div class="stat-value">97.5%</div></div>
-            <div class="stat-card"><div class="stat-label">HASH RATE</div><div class="stat-value">132 TH/s</div></div>
+            <div class="stat-card"><div>EFFICIENCY</div><div style="color:var(--gold)">97.5%</div></div>
+            <div class="stat-card"><div>HASH RATE</div><div style="color:var(--gold)">132 TH/s</div></div>
         </div>
 
         <div class="graph-box">
@@ -127,32 +59,19 @@
         </div>
 
         <div class="btn-group">
-            <button class="btn btn-red" onclick="toggleMining()">STOP</button>
-            <button class="btn btn-green" onclick="claimReward()">CLAIM</button>
-            <button class="btn btn-full" onclick="connectWallet()">CONNECT WEB3</button>
+            <button class="btn" style="background:#ef4444; color:white;">STOP</button>
+            <button class="btn" style="background:#10b981; color:white;">CLAIM</button>
+            <button class="btn btn-full">CONNECT WEB3</button>
         </div>
-        <div id="walletDisplay">NOT CONNECTED</div>
     </div>
 
     <script>
         const ctx = document.getElementById('miningChart').getContext('2d');
-        let graphData = [0.1, 0.3, 0.2, 0.5, 0.4, 0.7, 0.6, 0.9, 0.8, 1.1, 1.0, 1.2];
         const chart = new Chart(ctx, {
             type: 'line',
-            data: { labels: Array(12).fill(''), datasets: [{ data: graphData, borderColor: '#fbbf24', borderWidth: 2, tension: 0.4, fill: true, backgroundColor: 'rgba(251,191,36,0.1)', pointRadius: 0 }] },
+            data: { labels: Array(10).fill(''), datasets: [{ data: [1,3,2,5,4,7,6,9,8,10], borderColor: '#fbbf24', tension: 0.4, fill: true, backgroundColor: 'rgba(251,191,36,0.1)' }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { display: false } } }
         });
-
-        setInterval(() => {
-            graphData.shift();
-            graphData.push(Math.max(0.2, graphData[graphData.length - 1] + (Math.random() - 0.5) * 0.3));
-            chart.data.datasets[0].data = graphData;
-            chart.update('none');
-        }, 1000);
-
-        function toggleMining() { alert('Mining Toggled'); }
-        function claimReward() { alert('Claiming Rewards'); }
-        function connectWallet() { alert('Connecting Web3'); }
     </script>
 </body>
 </html>
