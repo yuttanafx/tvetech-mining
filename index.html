@@ -17,10 +17,60 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         
-        body { 
-            background: var(--bg); color: #fff; overflow-x: hidden;
-            background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #030305 80%);
-        }
+        <style>
+    /* 1. ล็อกหน้าจอไม่ให้เลื่อน */
+    html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* ปิดการเลื่อนหน้าจอ */
+        background: #030305;
+        color: #fff;
+    }
+
+    /* 2. จัดพื้นที่หลักให้เต็มหน้าจอพอดี */
+    .app-container {
+        width: 100%;
+        max-width: 450px;
+        height: 100vh; /* ใช้ความสูงเต็มจอ */
+        margin: auto;
+        padding: 10px; /* ลด padding เพื่อประหยัดพื้นที่ */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* กระจายพื้นที่ว่างอัตโนมัติ */
+    }
+
+    /* 3. ปรับขนาด Reactor ให้เล็กลงอัตโนมัติ */
+    .reactor-wrap {
+        height: 180px; /* จำกัดความสูงคงที่ */
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 4. กราฟต้องยืดหยุ่นตามพื้นที่ที่เหลือ */
+    .graph-box {
+        flex-grow: 1; /* ให้กราฟกินพื้นที่ส่วนที่เหลือ */
+        min-height: 100px;
+        margin: 10px 0;
+        background: rgba(0,0,0,0.3);
+        border-radius: 20px;
+        padding: 10px;
+    }
+
+    /* 5. ส่วนปุ่มและ Wallet ให้อยู่ด้านล่างสุดเสมอ */
+    .footer-area {
+        flex-shrink: 0;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+</style>
 
         .app-container {
             width: 100%; max-width: 450px; margin: auto; padding: 20px;
