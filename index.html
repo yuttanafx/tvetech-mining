@@ -104,13 +104,54 @@
     <script>
         // Init logic (ใช้โค้ดเดิมของคุณต่อได้เลยครับ ผมปรับแค่โครงสร้าง UI)
         // เพิ่มเติม: ปรับขนาดกราฟและ responsive
-        const ctx = document.getElementById('miningChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: { labels: Array(12).fill(''), datasets: [{ data: [0.1, 0.3, 0.2, 0.5, 0.4, 0.7, 0.6, 0.9, 0.8, 1.1, 1.0, 1.2], borderColor: '#fbbf24', tension: 0.4, fill: true, backgroundColor: 'rgba(251,191,36,0.1)' }] },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { display: false } } }
-        });
+        // ตั้งค่ากราฟเริ่มต้น
+const ctx = document.getElementById('miningChart').getContext('2d');
+let graphData = [0.1, 0.3, 0.2, 0.5, 0.4, 0.7, 0.6, 0.9, 0.8, 1.1, 1.0, 1.2];
 
+const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: Array(12).fill(''),
+        datasets: [{
+            data: graphData,
+            borderColor: '#fbbf24',
+            borderWidth: 3,
+            tension: 0.4, // ทำให้เส้นโค้งมน
+            fill: true,
+            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+            pointRadius: 0 // ปิดจุดเพื่อให้เส้นดูเนียนตา
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+            duration: 1000, // ความเร็วอนิเมชั่น 1 วินาที
+            easing: 'linear' // ให้เคลื่อนที่ต่อเนื่อง
+        },
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { display: false },
+            x: { display: false }
+        }
+    }
+});
+
+// ฟังก์ชันทำให้กราฟวิ่ง (Real-time Simulation)
+setInterval(() => {
+    // ตัดค่าแรกออก
+    graphData.shift();
+    
+    // สร้างค่าใหม่แบบสุ่มแต่ใกล้เคียงค่าเดิม
+    const last = graphData[graphData.length - 1];
+    const next = Math.max(0.2, last + (Math.random() - 0.5) * 0.3);
+    
+    graphData.push(next);
+    
+    // อัปเดตข้อมูลกราฟโดยไม่กระตุก
+    chart.data.datasets[0].data = graphData;
+    chart.update('none'); // ใช้ 'none' เพื่อไม่ให้เด้งเวลารีเฟรช
+}, 1000); // อัปเดตทุก 1 วินาที
         // (Script อื่นๆ ของคุณคงไว้เหมือนเดิม)
     </script>
 </body>
