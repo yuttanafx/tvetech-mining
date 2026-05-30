@@ -66,12 +66,46 @@
     </div>
 
     <script>
-        const ctx = document.getElementById('miningChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: { labels: Array(10).fill(''), datasets: [{ data: [1,3,2,5,4,7,6,9,8,10], borderColor: '#fbbf24', tension: 0.4, fill: true, backgroundColor: 'rgba(251,191,36,0.1)' }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { display: false } } }
-        });
-    </script>
+       <script>
+    // 1. ตั้งค่ากราฟ
+    const ctx = document.getElementById('miningChart').getContext('2d');
+    let graphData = Array(12).fill(0.5); // เริ่มต้นด้วยข้อมูล 12 จุด
+
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array(12).fill(''),
+            datasets: [{
+                data: graphData,
+                borderColor: '#fbbf24',
+                borderWidth: 3,
+                tension: 0.4, // เส้นโค้งมน
+                fill: true,
+                backgroundColor: 'rgba(251, 191, 36, 0.15)',
+                pointRadius: 0 // ปิดจุดกลมให้เป็นเส้นกราฟล้วน
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 500, easing: 'linear' }, // อนิเมชั่นลื่นๆ
+            plugins: { legend: { display: false } },
+            scales: { y: { display: false }, x: { display: false } }
+        }
+    });
+
+    // 2. ฟังก์ชันอัปเดตให้กราฟวิ่ง (Real-time)
+    setInterval(() => {
+        // ตัดค่าเก่าสุดออก แล้วเพิ่มค่าใหม่แบบสุ่ม
+        graphData.shift();
+        const lastValue = graphData[graphData.length - 1];
+        const newValue = Math.max(0.2, Math.min(1.5, lastValue + (Math.random() - 0.5) * 0.4));
+        graphData.push(newValue);
+        
+        // อัปเดตข้อมูลกราฟ
+        chart.data.datasets[0].data = graphData;
+        chart.update('none'); // อัปเดตแบบไม่กระตุก
+    }, 800); // อัปเดตทุก 0.8 วินาที
+   </script>
 </body>
 </html>
