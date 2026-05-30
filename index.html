@@ -31,19 +31,16 @@ padding:0;
 box-sizing:border-box;
 }
 
-html,
-body{
-
-width:100%;
-height:100%;
+html,body{
+height:100vh;
 overflow:hidden;
+}
 
-font-family:
-'Segoe UI',
-sans-serif;
+.container{
+height:100vh;
+max-height:100vh;
+justify-content:space-between;
 
-background:#020611;
-color:#fff;
 }
 
 /* ============================= */
@@ -146,21 +143,10 @@ padding:8px;
 }
 
 .container{
-
-width:100%;
-max-width:390px;
-height:100%;
-
-border-radius:30px;
-
-padding:14px;
-
-background:
-linear-gradient(
-180deg,
-rgba(3,10,24,.96),
-rgba(1,6,15,.98)
-);
+backdrop-filter: blur(18px);
+border:1px solid rgba(255,255,255,.08);
+box-shadow:0 0 80px rgba(0,200,255,.08);
+}
 
 border:
 1px solid rgba(0,255,255,.12);
@@ -558,37 +544,17 @@ stroke-dashoffset:0;
 /* ============================= */
 
 .bottom-buttons{
-
 display:grid;
-
-grid-template-columns:
-repeat(2,1fr);
-
+grid-template-columns:repeat(2, 1fr);
 gap:10px;
-
 margin-top:12px;
 }
 
 .action-btn{
-
-height:50px;
-
-border:none;
+height:52px;
 border-radius:16px;
-
-font-size:12px;
-font-weight:800;
-
-color:#fff;
-
-cursor:pointer;
-
-transition:.25s;
-
-letter-spacing:.5px;
-
-box-shadow:
-0 4px 15px rgba(0,0,0,.35);
+font-size:13px;
+letter-spacing:1px;
 }
 
 .action-btn:active{
@@ -864,10 +830,23 @@ ONLINE ●
 
 <div class="center">
 
-<div class="coin-ring">
+<div class=".coin-ring{
+animation:spin 8s linear infinite, pulseGlow 2s ease-in-out infinite;
+}
 
-<img
-src="https://i.postimg.cc/ncjSwbjv/Gemini-Generated-Image-ncdze7ncdze7ncdz-removebg-preview.png">
+@keyframes spin{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
+}
+
+@keyframes pulseGlow{
+0%,100%{
+box-shadow:0 0 20px rgba(255,200,0,.4);
+}
+50%{
+box-shadow:0 0 60px rgba(255,200,0,.9);
+}
+}
 
 </div>
 
@@ -934,32 +913,42 @@ PHASE 1
 
 <!-- GRAPH -->
 
-<div class="graph-box">
+const canvas = document.getElementById("graph");
+const ctx = canvas.getContext("2d");
 
-<div class="graph-glow"></div>
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
 
-<svg viewBox="0 0 400 120">
+let points = Array(30).fill(0);
 
-<defs>
+function drawGraph(){
 
-<linearGradient
-id="lineGradient"
-x1="0%"
-y1="0%"
-x2="100%"
-y2="0%">
+ctx.clearRect(0,0,canvas.width,canvas.height);
 
-<stop
-offset="0%"
-stop-color="#00ffaa"/>
+// shift data
+points.shift();
+points.push(Math.random()*80 + 20);
 
-<stop
-offset="50%"
-stop-color="#ffcc33"/>
+ctx.beginPath();
+ctx.strokeStyle = "#ffcc33";
+ctx.shadowColor = "#ffcc33";
+ctx.shadowBlur = 10;
+ctx.lineWidth = 3;
 
-<stop
-offset="100%"
-stop-color="#00c3ff"/>
+points.forEach((p,i)=>{
+let x = (i/points.length)*canvas.width;
+let y = canvas.height - p;
+
+if(i===0) ctx.moveTo(x,y);
+else ctx.lineTo(x,y);
+});
+
+ctx.stroke();
+
+requestAnimationFrame(drawGraph);
+}
+
+drawGraph();
 
 </linearGradient>
 
